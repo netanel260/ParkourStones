@@ -144,11 +144,17 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+	TSubclassOf<UInteractInterface> InteractInterfaceClass;
+	class UInteractInterface;
+
+
 	float SprintSpeed = 1200.f;
 	float WalkSpeed = 400.f;
 
 	void Sprint();
 	void Walk();
+	void SearchInteractable();
+
 
 };
 

@@ -12,6 +12,7 @@
 #include "MotionControllerComponent.h"
 #include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
 #include "GameFramework/CharacterMovementComponent.h"
+#include "InteractInterface.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -26,6 +27,40 @@ void AParkourStonesCharacter::Sprint()
 void AParkourStonesCharacter::Walk()
 {
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+}
+
+void AParkourStonesCharacter::SearchInteractable()
+{
+	FHitResult Result;
+	
+	APlayerCameraManager* CM = UGameplayStatics::GetPlayerCameraManager(this, 0);
+	FVector Start = CM->GetCameraLocation();
+	FVector Dir = CM->GetActorForwardVector();
+	FVector End = Start + (Dir * 200);
+
+	// FPrimitiveDrawInterface* DrawInterface;
+	// DrawArc(DrawInterface, );
+
+	UKismetSystemLibrary::DrawDebugLine(this, Start, End, FLinearColor::Red, 5, 1);
+
+	bool FoundObject = GetWorld()->LineTraceSingleByChannel
+	(
+		Result,
+		Start,
+		End,
+		ECC_Visibility
+	);
+
+	bool HasInterface = UKismetSystemLibrary::DoesImplementInterface
+	(
+		Result.GetActor(), 
+		InteractInterfaceClass
+	);
+
+	if (FoundObject && HasInterface)
+	{
+		Cast<IInteractInterface>(FoundObject)
+	}
 }
 
 AParkourStonesCharacter::AParkourStonesCharacter()
